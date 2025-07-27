@@ -29,20 +29,20 @@ protected:
 
 private:
 	TMap<FName, TSharedPtr<IErdanAssetManagerRuleTreeColumn>> RuleTreeColumns;
-	TSharedPtr<SComboBox<TSharedPtr<FString>>>  ManagedPathComboBox;
+	TSharedPtr<SComboBox<TSharedPtr<FDirPath>>>  ManagedPathComboBox;
 	TSharedPtr<class IDetailsView> PropertyView;
 	TSharedPtr<class SButton> AddManagedPath_BT;
 
 	TSharedPtr<SHeaderRow> RuleTreeViewHeaderRow;
 	TSharedPtr<SErdanAssetManagerRuleTreeView> TreeView;
 	TSharedPtr<IMenu> AddManagedPathPickerMenu;
-	TArray<TSharedPtr<FString>> ManagedPaths;
-	const FString GetCurrentManagedPath() const;
+	TArray<TSharedPtr<FDirPath>> ManagedPaths;
+	const FDirPath GetCurrentManagedPath() const;
 	TArray<FAssetRuleTreeItemPtr> TreeItems;
 	FReply OnSaveRuleData();
 
-	TSharedRef<SWidget> OnGenerateManagedPathComboItem(TSharedPtr<FString> InItem);
-	void OnCurrentManagedPathChanged(TSharedPtr<FString> NewChoice, ESelectInfo::Type SelectType);
+	TSharedRef<SWidget> OnGenerateManagedPathComboItem(TSharedPtr<FDirPath> InItem);
+	void OnCurrentManagedPathChanged(TSharedPtr<FDirPath> NewChoice, ESelectInfo::Type SelectType);
 	FReply OnAddManagedPath();
 	FReply OnDeleteManagedPath();
 

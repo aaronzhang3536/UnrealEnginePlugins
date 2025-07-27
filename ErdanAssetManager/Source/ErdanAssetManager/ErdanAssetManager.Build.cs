@@ -45,6 +45,8 @@ public class ErdanAssetManager : ModuleRules
 				"SlateCore",
                 "PropertyEditor",
                 "AssetRegistry",
+                "StructUtils",
+                "DesktopWidgets"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

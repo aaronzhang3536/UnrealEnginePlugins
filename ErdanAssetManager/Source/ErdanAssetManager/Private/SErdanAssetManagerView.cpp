@@ -21,6 +21,7 @@
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "UObject/SavePackage.h"
 
+#include "ErdanDirPathStructCustomization.h"
 #include "ErdanAssetManagerDetailCustomization.h"
 #include "ErdanAssetManagerRuleData.h"
 #include "ErdanAssetManagerRuleTreeColumn.h"
@@ -137,12 +138,12 @@ void SErdanAssetManagerView::Construct(const FArguments& InArgs)
 	];
 }
 
-TSharedRef<SWidget> SErdanAssetManagerView::OnGenerateManagedPathComboItem(TSharedPtr<FString> InItem)
+TSharedRef<SWidget> SErdanAssetManagerView::OnGenerateManagedPathComboItem(TSharedPtr<FDirPath> InItem)
 {
-	return SNew(STextBlock).Text(FText::FromString(*InItem));
+	return SNew(STextBlock).Text(FText::FromString((*InItem).Path));
 }
 
-void SErdanAssetManagerView::OnCurrentManagedPathChanged(TSharedPtr<FString> NewChoice, ESelectInfo::Type SelectType)
+void SErdanAssetManagerView::OnCurrentManagedPathChanged(TSharedPtr<FDirPath> NewChoice, ESelectInfo::Type SelectType)
 {
 	ForceRefreshTypeRules();
 }
@@ -151,10 +152,11 @@ FReply SErdanAssetManagerView::OnAddManagedPath()
 {
 	FContentBrowserModule& ContentBrowserModule = FModuleManager::LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
 	FPathPickerConfig PathPickerConfig;
-	PathPickerConfig.DefaultPath = GetCurrentManagedPath();
+	PathPickerConfig.DefaultPath = GetCurrentManagedPath().Path;
 	PathPickerConfig.bAllowContextMenu = false;
-	PathPickerConfig.OnPathSelected = FOnPathSelected::CreateLambda([&](const FString& Path)
+	PathPickerConfig.OnPathSelected = FOnPathSelected::CreateLambda([&](const FString& SelectedPath)
 	{
+		const FDirPath Path(SelectedPath);
 		if (AddManagedPathPickerMenu.IsValid())
 		{
 			AddManagedPathPickerMenu->Dismiss();
@@ -162,10 +164,10 @@ FReply SErdanAssetManagerView::OnAddManagedPath()
 		}
 		if (RuleData.IsValid() && ManagedPathComboBox.IsValid())
 		{
-			TSharedPtr<FString> NewPath ;
+			TSharedPtr<FDirPath> NewPath ;
 			if (RuleData->ManagedPathsRules.Contains(Path))
 			{
-				for (TSharedPtr<FString>& ThePath : ManagedPaths)
+				for (TSharedPtr<FDirPath>& ThePath : ManagedPaths)
 				{
 					if (ThePath.IsValid() && *ThePath.Get() == Path)
 					{
@@ -176,7 +178,7 @@ FReply SErdanAssetManagerView::OnAddManagedPath()
 			}
 			else
 			{
-				NewPath = MakeShared<FString>(Path);
+				NewPath = MakeShared<FDirPath>(Path);
 				RuleData->ManagedPathsRules.Add(Path);
 				ManagedPaths.Add(NewPath);
 			}
@@ -223,15 +225,15 @@ void SErdanAssetManagerView::CreatePropertyView()
 
 void SErdanAssetManagerView::CreateManagedPathComboBox()
 {
-	SAssignNew(ManagedPathComboBox, SComboBox<TSharedPtr<FString>>)
+	SAssignNew(ManagedPathComboBox, SComboBox<TSharedPtr<FDirPath>>)
 		.ButtonStyle(FAppStyle::Get(), "PropertyEditor.AssetComboStyle")
-		.InitiallySelectedItem(ManagedPaths.Num() > 0 ? ManagedPaths[0] : MakeShareable(new FString("")))
+		.InitiallySelectedItem(ManagedPaths.Num() > 0 ? ManagedPaths[0] : MakeShareable(new FDirPath("")))
 		.OptionsSource(&ManagedPaths)
 		.OnGenerateWidget(this, &SErdanAssetManagerView::OnGenerateManagedPathComboItem)
 		.OnSelectionChanged(this, &SErdanAssetManagerView::OnCurrentManagedPathChanged)
 		.Content()
 		[
-			SNew(STextBlock).Text_Lambda([&]()->FText {return FText::FromString(GetCurrentManagedPath()); })
+			SNew(STextBlock).Text_Lambda([&]()->FText {return FText::FromString(GetCurrentManagedPath().Path); })
 		];
 }
 
@@ -294,11 +296,11 @@ void SErdanAssetManagerView::ForceRefreshManagedPath()
 	ManagedPaths.Empty();
 	if (RuleData.IsValid())
 	{
-		TArray<FString> Keys;
+		TArray<FDirPath> Keys;
 		RuleData->ManagedPathsRules.GetKeys(Keys);
-		for (const FString& ManagedPath : Keys)
+		for (const FDirPath& ManagedPath : Keys)
 		{
-			ManagedPaths.Emplace(new FString(ManagedPath));
+			ManagedPaths.Emplace(new FDirPath(ManagedPath));
 		}
 	}
 }
@@ -306,7 +308,7 @@ void SErdanAssetManagerView::ForceRefreshManagedPath()
 void SErdanAssetManagerView::ForceRefreshTypeRules()
 {
 	TreeItems.Empty();
-	FString ManagedPath = GetCurrentManagedPath();
+	FDirPath ManagedPath = GetCurrentManagedPath();
 	if (!ManagedPath.IsEmpty())
 	{
 		if (RuleData->ManagedPathsRules.Contains(ManagedPath))
@@ -366,7 +368,7 @@ void SErdanAssetManagerView::SetupTreeViewColumns()
 	
 }
 
-const FString SErdanAssetManagerView::GetCurrentManagedPath() const
+const FDirPath SErdanAssetManagerView::GetCurrentManagedPath() const
 {
 	if (ManagedPathComboBox.IsValid())
 	{
@@ -375,7 +377,7 @@ const FString SErdanAssetManagerView::GetCurrentManagedPath() const
 			return *ManagedPathComboBox->GetSelectedItem().Get();
 		}
 	}
-	return FString();
+	return FDirPath();
 }
 
 FReply SErdanAssetManagerView::OnSaveRuleData()
@@ -432,7 +434,7 @@ SErdanAssetManagerView::~SErdanAssetManagerView()
 		RuleData.Reset();
 	}
 	
-	for (TSharedPtr<FString> Str : ManagedPaths)
+	for (TSharedPtr<FDirPath> Str : ManagedPaths)
 	{
 		if (Str.IsValid())
 		{

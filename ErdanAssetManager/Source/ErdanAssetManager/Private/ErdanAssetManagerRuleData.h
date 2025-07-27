@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "StructUtils/InstancedStruct.h"
+#include "InstancedStruct.h"
 
 #include "ErdanAssetManagerRuleData.generated.h"
 
@@ -31,17 +31,28 @@ struct FSinglePathRules
 	TMap<UClass*, FAssetRuleItem> TypeRules;
 };
 
-/*
--Path
---Type1
----Rule1
----Rule2
----Rule3
---Type2
----Rule1
----Rule2
----Rule3
-*/
+USTRUCT(BlueprintType)
+struct FDirPath 
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Path)
+	FString Path;
+	
+	bool operator==(const FDirPath& Other) const
+	{
+		return Path == Other.Path;
+	}
+
+	friend uint32 GetTypeHash(const FDirPath& Key)
+	{
+		return GetTypeHash(Key.Path);
+	}
+	 bool IsEmpty() const
+	{
+		return Path.IsEmpty();
+	}
+};
 
 //////////////////////////////////////////////////////////////////////////
 // SErdanAssetManagerView
@@ -50,6 +61,6 @@ class UErdanAssetManagerRuleData : public UObject
 {
 	GENERATED_UCLASS_BODY()
 public:
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	TMap<FString, FSinglePathRules> ManagedPathsRules;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TMap<FDirPath, FSinglePathRules> ManagedPathsRules;
 };

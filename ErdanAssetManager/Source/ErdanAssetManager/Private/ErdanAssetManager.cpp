@@ -11,6 +11,8 @@
 #include "ContentBrowserModule.h"
 #include "IContentBrowserSingleton.h"
 #include "SErdanAssetManagerView.h"
+#include "ErdanDirPathStructCustomization.h"
+#include "ErdanAssetManagerRuleDataCustomization.h"
 
 static const FName ErdanAssetManagerTabName("ErdanAssetManager");
 
@@ -37,6 +39,12 @@ void FErdanAssetManagerModule::StartupModule()
 	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(ErdanAssetManagerTabName, FOnSpawnTab::CreateRaw(this, &FErdanAssetManagerModule::OnSpawnPluginTab))
 		.SetDisplayName(LOCTEXT("FErdanAssetManagerTabTitle", "ErdanAssetManager"))
 		.SetMenuType(ETabSpawnerMenuType::Hidden);
+
+
+
+	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
+	PropertyModule.RegisterCustomPropertyTypeLayout("DirPath", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FErdanDirPathStructCustomization::MakeInstance));
+	PropertyModule.RegisterCustomClassLayout("ErdanAssetManagerRuleData", FOnGetDetailCustomizationInstance::CreateStatic(&FErdanAssetManagerRuleDataCustomization::MakeInstance));
 }
 
 void FErdanAssetManagerModule::ShutdownModule()
@@ -91,6 +99,11 @@ void FErdanAssetManagerModule::RegisterMenus()
 				Entry.SetCommandList(PluginCommands);
 			}
 		}
+	}
+
+	{
+		FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
+		PropertyModule.UnregisterCustomClassLayout("UErdanAssetManagerRuleData");
 	}
 }
 
