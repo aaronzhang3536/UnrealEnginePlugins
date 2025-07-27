@@ -3,6 +3,7 @@
 #include "DetailLayoutBuilder.h"
 #include "DetailCategoryBuilder.h"
 #include "ErdanAssetManagerRuleData.h"
+#include "IPropertyUtilities.h"
 
 
 #define LOCTEXT_NAMESPACE "ErdanAssetManagerRuleDataCustomization"
@@ -15,9 +16,24 @@ TSharedRef<IDetailCustomization> FErdanAssetManagerRuleDataCustomization::MakeIn
 void FErdanAssetManagerRuleDataCustomization::CustomizeDetails(IDetailLayoutBuilder& DetailBuilder)
 {
 	DetailBuilder.HideProperty("General");
+
+	//DetailBuilder.GetDetailsView()->top
+
 	TSharedPtr<IPropertyHandle> MapProperty = DetailBuilder.GetProperty(GET_MEMBER_NAME_CHECKED(UErdanAssetManagerRuleData, ManagedPathsRules));
 
 	if (!MapProperty.IsValid() || !MapProperty->IsValidHandle()) return;
+
+	TSharedPtr<IPropertyUtilities> PropertyUtils = DetailBuilder.GetPropertyUtilities();
+
+	FSimpleDelegate RefreshDelegate =
+		FSimpleDelegate::CreateLambda([PropertyUtils]()
+			{
+				PropertyUtils->ForceRefresh();
+			});
+
+
+	MapProperty->AsMap()->SetOnNumElementsChanged(RefreshDelegate);
+
 	MapProperty->MarkHiddenByCustomization();
 
 	{

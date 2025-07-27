@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Types/ISlateMetaData.h"
 #include "InstancedStruct.h"
 
 #include "ErdanAssetManagerRuleData.generated.h"
@@ -17,9 +18,21 @@ struct FAssetRuleItem
 	UObject* RuleObject = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FString> ManagedPropertyPath;
+};
 
-	UPROPERTY(EditAnywhere, meta = (BaseStruct = "/Script/ErdanAssetManager.AssetRuleItem"))
-	TArray<FInstancedStruct> Children;
+struct FAssetRuleItemMetaData : public ISlateMetaData, public TSharedFromThis<FAssetRuleItemMetaData>
+{
+	SLATE_METADATA_TYPE(FAssetRuleItemMetaData, ISlateMetaData);
+	FAssetRuleItem* RuleItem = nullptr;
+};
+
+USTRUCT(BlueprintType, Blueprintable)
+struct FAssetRuleList
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FAssetRuleItem> Rules;
 };
 
 
@@ -28,7 +41,7 @@ struct FSinglePathRules
 {
 	GENERATED_BODY()
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TMap<UClass*, FAssetRuleItem> TypeRules;
+	TMap<UClass*, FAssetRuleList> TypeRules;
 };
 
 USTRUCT(BlueprintType)
@@ -36,8 +49,8 @@ struct FDirPath
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Path)
-	FString Path;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Path)  //RelativeToGameContentDir
+	FString Path = FString(TEXT("DefaultInvalidPath"));
 	
 	bool operator==(const FDirPath& Other) const
 	{
@@ -61,6 +74,6 @@ class UErdanAssetManagerRuleData : public UObject
 {
 	GENERATED_UCLASS_BODY()
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (LongPackageName))
 	TMap<FDirPath, FSinglePathRules> ManagedPathsRules;
 };

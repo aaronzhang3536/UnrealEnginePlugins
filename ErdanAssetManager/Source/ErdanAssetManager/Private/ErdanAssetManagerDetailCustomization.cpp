@@ -1,7 +1,6 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+ //Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "ErdanAssetManagerDetailCustomization.h"
-#include "SErdanAssetManagerView.h"
 #include "ErdanAssetManagerRuleData.h"
 
 #include "Misc/MessageDialog.h"
@@ -51,7 +50,7 @@ void FErdanAssetManagerDetailCustomization::CustomizeDetails(IDetailLayoutBuilde
     DetailLayout.HideCategory("Thumbnail");
 
     PropertyUtilities = DetailLayout.GetPropertyUtilities();
-    // 获取当前正在定制的所有对象
+     //获取当前正在定制的所有对象
     TArray<TWeakObjectPtr<UObject>> CustomizedObjects;
     DetailLayout.GetObjectsBeingCustomized(CustomizedObjects);    
 
@@ -99,34 +98,28 @@ void FErdanAssetManagerDetailCustomization::CustomizeDetails(IDetailLayoutBuilde
                                 .Style(&FAppStyle::Get().GetWidgetStyle<FCheckBoxStyle>("Menu.CheckBox"))
                                 .OnCheckStateChanged_Lambda([&,PropertyPath](ECheckBoxState NewState)
                                 {
-                                    TSharedPtr<FAssetRuleTreeItem> RuleTreeItem = DetailLayout.GetDetailsView()->GetMetaData<FAssetRuleTreeItem>();
-                                    if (RuleTreeItem.IsValid())
+                                    TSharedPtr<FAssetRuleItemMetaData> RuleItemMetaData = DetailLayout.GetDetailsView()->GetMetaData<FAssetRuleItemMetaData>();
+                                    if (RuleItemMetaData.IsValid())
                                     {
-                                        FAssetRuleItem* RuleItem = RuleTreeItem->RuleItem;
-                                        if (RuleItem)
+                                        FAssetRuleItem* RuleItem = RuleItemMetaData->RuleItem;
+                                        if (NewState == ECheckBoxState::Checked)
                                         {
-                                            if (NewState == ECheckBoxState::Checked)
-                                            {
-                                                RuleItem->ManagedPropertyPath.Add(PropertyPath);
-                                            }
-                                            else if (NewState == ECheckBoxState::Unchecked)
-                                            {
-                                                RuleItem->ManagedPropertyPath.Remove(PropertyPath);
-                                            }
+                                            RuleItem->ManagedPropertyPath.Add(PropertyPath);
+                                        }
+                                        else if (NewState == ECheckBoxState::Unchecked)
+                                        {
+                                            RuleItem->ManagedPropertyPath.Remove(PropertyPath);
                                         }
                                     }
                                 })
                                 .IsChecked_Lambda([&,PropertyPath]()
                                 { 
                                     bool bIsChecked = false;
-                                    TSharedPtr<FAssetRuleTreeItem> RuleTreeItem = DetailLayout.GetDetailsView()->GetMetaData<FAssetRuleTreeItem>();
-                                    if (RuleTreeItem.IsValid())
+                                    TSharedPtr<FAssetRuleItemMetaData> RuleItemMetaData = DetailLayout.GetDetailsView()->GetMetaData<FAssetRuleItemMetaData>();
+                                    if (RuleItemMetaData.IsValid())
                                     {
-                                        FAssetRuleItem* RuleItem = RuleTreeItem->RuleItem;
-                                        if (RuleItem)
-                                        {
-                                            RuleItem->ManagedPropertyPath.Contains(PropertyPath) ? bIsChecked = true : bIsChecked = false;
-                                        }
+                                        FAssetRuleItem* RuleItem = RuleItemMetaData->RuleItem;
+                                        RuleItem->ManagedPropertyPath.Contains(PropertyPath) ? bIsChecked = true : bIsChecked = false;
                                     }
                                     return bIsChecked ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
                                 })

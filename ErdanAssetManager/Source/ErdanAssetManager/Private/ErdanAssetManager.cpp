@@ -10,9 +10,9 @@
 #include "ToolMenus.h"
 #include "ContentBrowserModule.h"
 #include "IContentBrowserSingleton.h"
-#include "SErdanAssetManagerView.h"
 #include "ErdanDirPathStructCustomization.h"
 #include "ErdanAssetManagerRuleDataCustomization.h"
+#include "ErdanAssetRuleListStructCustomization.h"
 
 static const FName ErdanAssetManagerTabName("ErdanAssetManager");
 
@@ -44,6 +44,8 @@ void FErdanAssetManagerModule::StartupModule()
 
 	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
 	PropertyModule.RegisterCustomPropertyTypeLayout("DirPath", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FErdanDirPathStructCustomization::MakeInstance));
+	PropertyModule.RegisterCustomPropertyTypeLayout("AssetRuleList", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FErdanAssetRuleListStructCustomization::MakeInstance));
+	
 	PropertyModule.RegisterCustomClassLayout("ErdanAssetManagerRuleData", FOnGetDetailCustomizationInstance::CreateStatic(&FErdanAssetManagerRuleDataCustomization::MakeInstance));
 }
 
@@ -68,7 +70,8 @@ TSharedRef<SDockTab> FErdanAssetManagerModule::OnSpawnPluginTab(const FSpawnTabA
 	return SNew(SDockTab)
 		.TabRole(ETabRole::NomadTab)
 		[
-			SNew(SErdanAssetManagerView)
+			SNew(STextBlock)
+			//SNew(SErdanAssetManagerView)
 		];
 }
 
