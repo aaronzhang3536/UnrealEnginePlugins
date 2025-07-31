@@ -46,7 +46,9 @@ public class ErdanAssetManager : ModuleRules
                 "PropertyEditor",
                 "AssetRegistry",
                 "StructUtils",
-                "DesktopWidgets"
+                "DesktopWidgets",
+                "TargetPlatform",
+                "PropertyPath"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

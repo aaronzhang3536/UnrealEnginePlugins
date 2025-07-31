@@ -27,4 +27,6 @@ private:
 
 private:
 	TSharedPtr<class FUICommandList> PluginCommands;
+
+	class FAssetActionListener* AssetActionListener = nullptr;
 };

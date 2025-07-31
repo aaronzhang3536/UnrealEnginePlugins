@@ -74,6 +74,13 @@ class UErdanAssetManagerRuleData : public UObject
 {
 	GENERATED_UCLASS_BODY()
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (GetOptions = GetSupportedPlatforms))
+	FString TargetPlatform;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (LongPackageName))
 	TMap<FDirPath, FSinglePathRules> ManagedPathsRules;
+
+public:
+	UFUNCTION()
+	TArray<FString> GetSupportedPlatforms();
 };

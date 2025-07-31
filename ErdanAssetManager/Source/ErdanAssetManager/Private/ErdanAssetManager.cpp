@@ -14,6 +14,8 @@
 #include "ErdanAssetManagerRuleDataCustomization.h"
 #include "ErdanAssetRuleListStructCustomization.h"
 
+#include "AssetActionListener.h"
+
 static const FName ErdanAssetManagerTabName("ErdanAssetManager");
 
 #define LOCTEXT_NAMESPACE "FErdanAssetManagerModule"
@@ -22,6 +24,14 @@ void FErdanAssetManagerModule::StartupModule()
 {
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 	
+	// Section1: 初始化资源行为监听器
+	{
+		AssetActionListener = new FAssetActionListener();
+		AssetActionListener->RegisterAssetEventHandlers();
+	}
+
+
+
 	FErdanAssetManagerStyle::Initialize();
 	FErdanAssetManagerStyle::ReloadTextures();
 
@@ -63,6 +73,10 @@ void FErdanAssetManagerModule::ShutdownModule()
 	FErdanAssetManagerCommands::Unregister();
 
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(ErdanAssetManagerTabName);
+
+
+	AssetActionListener->UnregisterAssetEventHandlers();
+	delete AssetActionListener;
 }
 
 TSharedRef<SDockTab> FErdanAssetManagerModule::OnSpawnPluginTab(const FSpawnTabArgs& SpawnTabArgs)
