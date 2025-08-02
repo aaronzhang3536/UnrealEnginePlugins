@@ -15,7 +15,7 @@ struct FAssetRuleItem
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString RegularExpression = FString();
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UObject* RuleObject = nullptr;
+	TObjectPtr<UObject> RuleObject = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FString> ManagedPropertyPath;
 };

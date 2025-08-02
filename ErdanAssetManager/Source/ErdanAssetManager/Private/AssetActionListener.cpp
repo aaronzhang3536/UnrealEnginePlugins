@@ -118,7 +118,7 @@ void FAssetActionListener::OnAssetAdded(const FAssetData& AssetData)
 {
 	for (auto It = FinalRules.CreateConstIterator(); It; ++It) 
 	{
-		if (AssetData.ObjectPath.ToString().Contains(*It->Key.Path))
+		if (AssetData.GetSoftObjectPath().ToString().Contains(*It->Key.Path))
 		{
 			const FAssetRuleList* RuleList = It.Value().TypeRules.Find(AssetData.GetClass());
 			if (RuleList)

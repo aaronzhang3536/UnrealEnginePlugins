@@ -13,6 +13,7 @@
 #include "ErdanDirPathStructCustomization.h"
 #include "ErdanAssetManagerRuleDataCustomization.h"
 #include "ErdanAssetRuleListStructCustomization.h"
+#include "AssetRuleItemStructCustomization.h"
 
 #include "AssetActionListener.h"
 
@@ -55,6 +56,7 @@ void FErdanAssetManagerModule::StartupModule()
 	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
 	PropertyModule.RegisterCustomPropertyTypeLayout("DirPath", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FErdanDirPathStructCustomization::MakeInstance));
 	PropertyModule.RegisterCustomPropertyTypeLayout("AssetRuleList", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FErdanAssetRuleListStructCustomization::MakeInstance));
+	PropertyModule.RegisterCustomPropertyTypeLayout("AssetRuleItem", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FAssetRuleItemStructCustomization::MakeInstance));
 	
 	PropertyModule.RegisterCustomClassLayout("ErdanAssetManagerRuleData", FOnGetDetailCustomizationInstance::CreateStatic(&FErdanAssetManagerRuleDataCustomization::MakeInstance));
 }
