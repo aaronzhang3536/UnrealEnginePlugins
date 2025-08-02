@@ -14,6 +14,9 @@
 #include "ErdanAssetManagerRuleDataCustomization.h"
 #include "ErdanAssetRuleListStructCustomization.h"
 #include "AssetRuleItemStructCustomization.h"
+#include "IAssetTools.h"
+#include "AssetToolsModule.h"
+#include "ErdanAssetManagerRuleDataAssetTypeActions.h"
 
 #include "AssetActionListener.h"
 
@@ -30,8 +33,6 @@ void FErdanAssetManagerModule::StartupModule()
 		AssetActionListener = new FAssetActionListener();
 		AssetActionListener->RegisterAssetEventHandlers();
 	}
-
-
 
 	FErdanAssetManagerStyle::Initialize();
 	FErdanAssetManagerStyle::ReloadTextures();
@@ -59,6 +60,10 @@ void FErdanAssetManagerModule::StartupModule()
 	PropertyModule.RegisterCustomPropertyTypeLayout("AssetRuleItem", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FAssetRuleItemStructCustomization::MakeInstance));
 	
 	PropertyModule.RegisterCustomClassLayout("ErdanAssetManagerRuleData", FOnGetDetailCustomizationInstance::CreateStatic(&FErdanAssetManagerRuleDataCustomization::MakeInstance));
+
+	IAssetTools& AssetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
+	Action = MakeShared<FAssetTypeActions_ErdanAssetManagerRuleData>();
+	AssetTools.RegisterAssetTypeActions(Action.ToSharedRef());
 }
 
 void FErdanAssetManagerModule::ShutdownModule()
@@ -75,6 +80,10 @@ void FErdanAssetManagerModule::ShutdownModule()
 	FErdanAssetManagerCommands::Unregister();
 
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(ErdanAssetManagerTabName);
+
+
+	IAssetTools& AssetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
+	AssetTools.UnregisterAssetTypeActions(Action.ToSharedRef());
 
 
 	AssetActionListener->UnregisterAssetEventHandlers();

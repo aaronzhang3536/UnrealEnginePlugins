@@ -3,6 +3,7 @@
 #include "AssetRuleItemStructCustomization.h"
 
 #include "DetailWidgetRow.h"
+#include "IPropertyUtilities.h"
 
 
 class SWidget;
@@ -52,20 +53,45 @@ void FAssetRuleItemStructCustomization::CustomizeHeader( TSharedRef<IPropertyHan
 			.MinDesiredWidth(125.0f)
 			.MaxDesiredWidth(600.0f)
 			[
-				//SNew(SHorizontalBox)
-				//	+ SHorizontalBox::Slot()
-				//	.FillWidth(1.0f)
-				//	.VAlign(VAlign_Center)
-					//[
+				SNew(SHorizontalBox)
+					+ SHorizontalBox::Slot()
+					.FillWidth(1.0f)
+					.VAlign(VAlign_Center)
+					[
 						RuleObjProperty->CreatePropertyValueWidget()
-					//]
-					//+ SHorizontalBox::Slot()
-					//.AutoWidth()
-					//.Padding(FMargin(4.0f, 0.0f, 0.0f, 0.0f))
-					//.VAlign(VAlign_Center)
-					//[
-					//	StructPropertyHandle->CreateDefaultPropertyButtonWidgets()
-					//]
+					]
+					+ SHorizontalBox::Slot()
+					.AutoWidth()
+					.Padding(FMargin(4.0f, 0.0f, 0.0f, 0.0f))
+					.VAlign(VAlign_Center)
+					[
+						SNew(SButton)
+							.HAlign(HAlign_Center)
+							.VAlign(VAlign_Center)
+							.OnClicked_Lambda([&]()
+								{
+									//TSharedPtr<FTabManager> TabManager = FGlobalTabmanager::Get(); // 或你自定义的TabManager
+
+									//StructPropertyHandle->
+									//FName TabId = "SubObjectDetailTab";
+
+									//if (!TabManager->HasTabSpawner(TabId))
+									//{
+									//	TabManager->RegisterTabSpawner(TabId, FOnSpawnTab::CreateRaw(this, &FMyCustomization::SpawnSubObjectTab))
+									//		.SetDisplayName(FText::FromString("子对象详情"))
+									//		.SetGroup(WorkspaceGroup.Pin()) // 这一步是关键，让它和原来的 tab 同组
+									//		.SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.Tabs.Details"));
+									//}
+
+									//TabManager->TryInvokeTab(TabId);
+									return FReply::Handled();
+								})
+							.Content()
+							[
+								SNew(SImage)
+									.Image(FAppStyle::GetBrush("LevelEditor.Tabs.Details"))
+							]
+					]
 			]
 			.NameContent()
 			[
@@ -73,6 +99,7 @@ void FAssetRuleItemStructCustomization::CustomizeHeader( TSharedRef<IPropertyHan
 					+ SHorizontalBox::Slot()
 					.FillWidth(1.0f)
 					.VAlign(VAlign_Center)
+					.HAlign(HAlign_Fill)
 					[
 						SNew(SBox)
 						.HAlign(HAlign_Fill)

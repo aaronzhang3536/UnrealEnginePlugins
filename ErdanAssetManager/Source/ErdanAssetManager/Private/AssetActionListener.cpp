@@ -153,7 +153,7 @@ void FAssetActionListener::OnAssetAdded(const FAssetData& AssetData)
 								SrcCachedPropertyPath.SetCachedContainer(RuleItem.RuleObject);
 								FCachedPropertyPath DstCachedPropertyPath(PropertyPath);
 								DstCachedPropertyPath.SetCachedContainer(Object);								
-								PropertyPathHelpers::CopyPropertyValue(Object, DstCachedPropertyPath, SrcCachedPropertyPath);\
+								PropertyPathHelpers::CopyPropertyValue(Object, DstCachedPropertyPath, SrcCachedPropertyPath);
 							}
 						}
 					}
